@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../build/react.js"></script>
+    <script src="../build/react-dom.js"></script>
+    <script src="../build/browser.min.js"></script>
+  </head>
+  <body>
+    <div id="example"></div>
+    <script type="text/babel">
+    window.test = [];
+      var SetIntervalMixin = {
+        componentWillMount: function() {
+          window.test.push(this.setInterval);
+          this.intervals = [];
+        },
+        setInterval: function() {
+          this.intervals.push(setInterval.apply(null, arguments));
+        },
+        componentWillUnmount: function() {
+          this.intervals.forEach(clearInterval);
+        }
+      };
+
+      var TickTock = React.createClass({
+        mixins: [SetIntervalMixin], // 引用 mixin
+        getInitialState: function() {
+          return {seconds: 0};
+        },
+        componentDidMount: function() {
+          debugger;
+          this.setInterval(this.tick, 1000); // 调用 mixin 的方法
+        },
+        tick: function() {
+          this.setState({seconds: this.state.seconds + 1});
+        },
+        render: function() {
+          debugger;
+          return (
+            <p>
+              React has been running for {this.state.seconds} seconds.
+            </p>
+          );
+        }
+      });
+
+      ReactDOM.render(
+        <div>
+          <TickTock />
+          <TickTock />
+        </div>,
+        document.getElementById('example')
+      );
+    </script>
+  </body>
+</html>

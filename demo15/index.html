@@ -30,7 +30,6 @@
                 // this.props，this.state都已经准备好，可以根据传入的状态修改state而不会引起重绘，
                 // 因为根本就还没有绘制
                 console.log('HelloOne------componentWillMount');
-                console.log(this.props);
             },
             componentDidMount: function() {
                 // 渲染完成后调用一次，这个时候DOM结构已经渲染了。
@@ -65,17 +64,48 @@
                 });
                 // ReactDOM.unmountComponentAtNode(document.getElementById('example'));
             },
+            destory: function(e) {
+                ReactDOM.unmountComponentAtNode(document.getElementById('example'));
+            },
             render: function() {
                 console.log('HelloOne------render');
                 return <div className="hello-message">
                     <input type="text" value={this.state.inputValue} onChange={this.handleChange}/>
-                    <p ref='test'>{this.props.defaultProp}</p>
+                    <p ref='test'>{this.props.defaultProp} <button onClick={this.destory}>click destory</button></p>
                     <HelloChild className="" name={this.state.inputValue}></HelloChild>
                 </div>;
             }
         });
         
         var HelloChild = React.createClass({
+            getDefaultProps: function() {
+                // 组件类创建时候调用，仅调用一次，返回作为所有组件实例共享的组件属性
+                // props为只读属性，仅可以由父组件来修改，然后把修改值通过render方法传递给子组件
+                console.log('HelloChild------getDefaultProps');
+                return {
+                    defaultProp: 'defaultProp'
+                };
+            },
+            getInitialState: function() {
+                // 渲染前调用一次，实例化过程最先调用的方法，初始化组件实例的状态
+                console.log('HelloChild------getInitialState');
+                return {
+                    initial: 'initialState',
+                    inputValue: 'initialValue'
+                };
+            },
+            componentWillMount: function() {
+                // 渲染前调用一次，这个时候DOM结构还没有渲染。
+                // this.props，this.state都已经准备好，可以根据传入的状态修改state而不会引起重绘，
+                // 因为根本就还没有绘制
+                console.log('HelloChild------componentWillMount');
+            },
+            componentDidMount: function() {
+                // 渲染完成后调用一次，这个时候DOM结构已经渲染了。
+                // 这个时候就可以初始化其他框架的设置了，如果利用jQuery绑定事件等等。
+                // 一般我们会在这里异步获取数据，重新渲染页面
+                console.log('HelloChild------componentDidMount');
+            },
             componentWillReceiveProps: function(nextProps) {
                 // 组件接收到新的props时会调用，一般在组件嵌套中比较常见，单一组件state变化是不会执行这个函数的
                 console.log('HelloChild------componentWillReceiveProps:', nextProps);
